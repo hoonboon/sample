@@ -1,0 +1,144 @@
+
+# Ref: http://docs.confluent.io/3.2.0/quickstart.html#quickstart
+
+$ cd /tools/java/confluent-3.2.0
+
+# The following commands assume you exactly followed the instructions above.
+# This means, for example, that at this point your current working directory
+# must be `confluent-3.2.0/`.
+
+# Start in own terminal.
+$ ./bin/zookeeper-server-start ./etc/kafka/zookeeper.properties
+
+# Start in own terminal.
+$ ./bin/kafka-server-start ./etc/kafka/server.properties
+
+# Start in own terminal.
+$ ./bin/schema-registry-start ./etc/schema-registry/schema-registry.properties
+
+# We’ll use a utility provided with Kafka to send the data without having to write any code. 
+# We direct it at our local Kafka cluster, tell it to write to the topic test, 
+# read each line of input as an Avro message, validate the schema against the Schema Registry 
+# at the specified URL, and finally indicate the format of the data.
+$ ./bin/kafka-avro-console-producer \
+         --broker-list 10.200.10.1:9092 --topic test01 \
+         --property value.schema='{"type":"record","name":"myrecord01","fields":[{"name":"f1","type":"string"},{"name":"f2","type":"string"}]}'
+
+# Once started, the process will wait for you to enter messages, one per line, 
+# and will send them immediately when you hit the Enter key. Try entering a couple of messages:
+
+{"f1": "value1", "f2": "value11"}
+{"f1": "value2", "f2": "value22"}
+{"f1": "value3", "f2": "value33"}
+{"f1": "value4", "f2": "value44"}
+{"f1": "value5", "f2": "value55"}
+{"f1": "value6", "f2": "value66"}
+
+# When you’re done, use Ctrl+C to shut down the process.
+
+$ ./bin/kafka-topics --list --zookeeper 10.200.10.1:2181
+
+$ ./bin/kafka-topics --describe --topic my-topic  --zookeeper 10.200.10.1:2181
+ 
+# Now we can check that the data was produced by using Kafka’s console consumer process 
+# to read data from the topic. We point it at the same test topic, our ZooKeeper instance, 
+# tell it to decode each message using Avro using the same Schema Registry URL to look up schemas, 
+# and finally tell it to start from the beginning of the topic (by default the consumer only reads messages published after it starts).
+
+$ ./bin/kafka-avro-console-consumer --topic test01 \
+         --zookeeper 10.200.10.1:2181 \
+         --from-beginning
+
+# This will only show information about consumers that use ZooKeeper (not those using the Java consumer API).
+$ ./bin/kafka-consumer-groups --list --zookeeper 10.200.10.1:2181
+
+# Checking consumer position 
+$ ./bin/kafka-consumer-groups --describe --zookeeper 10.200.10.1:2181 --group console-consumer-86157
+
+
+# This will only show information about consumers that use the Java consumer API (non-ZooKeeper-based consumers).
+$ ./bin/kafka-consumer-groups --list --bootstrap-server 10.200.10.1:9092
+
+# Checking consumer position 
+$ ./bin/kafka-consumer-groups --describe --bootstrap-server 10.200.10.1:9092 --group my-first-streams-application
+
+
+
+
+
+# Maven package and run jar file
+$ cd /Users/hOOnbOOn/Documents/task/workspace/sts_01/demo-kafkaStream
+
+$ mvn clean package && java -jar target/demo-kafkaStream-0.0.1-SNAPSHOT.jar
+
+## To reload current project related local repository cache - when the cache is corrupted
+$ mvn dependency:purge-local-repository -DactTransitively=false
+
+
+
+#== Kafka Connect - Standalone ==
+
+$ ./bin/connect-standalone ./etc/schema-registry/connect-avro-standalone.properties \
+      ./etc/kafka/connect-file-source.properties \
+      ./etc/kafka/connect-file-sink.properties
+      
+$ ./bin/kafka-avro-console-consumer --zookeeper 10.200.10.1:2181 --topic connect-test --from-beginning
+
+
+#== Kafka Connect - Distributed ==
+
+# config.storage.topic=connect-configs
+$ ./bin/kafka-topics --create --zookeeper 10.200.10.1:2181 --topic connect-configs --replication-factor 3 --partitions 1 --config cleanup.policy=compact
+
+# offset.storage.topic=connect-offsets
+$ ./bin/kafka-topics --create --zookeeper 10.200.10.1:2181 --topic connect-offsets --replication-factor 3 --partitions 50 --config cleanup.policy=compact
+
+# status.storage.topic=connect-status
+$ ./bin/kafka-topics --create --zookeeper 10.200.10.1:2181 --topic connect-status --replication-factor 3 --partitions 10 --config cleanup.policy=compact
+
+$ ./bin/kafka-topics --delete --zookeeper 10.200.10.1:2181 --topic connect-configs
+$ ./bin/kafka-topics --delete --zookeeper 10.200.10.1:2181 --topic connect-offsets
+$ ./bin/kafka-topics --delete --zookeeper 10.200.10.1:2181 --topic connect-status
+
+$ ./bin/connect-distributed ./etc/schema-registry/connect-avro-distributed.properties 
+
+$ curl -X POST -H "Content-Type: application/json" --data '{"name": "local-file-sink", "config": {"connector.class":"FileStreamSinkConnector", "tasks.max":"1", "file":"test.sink.txt", "topics":"connect-test" }}' http://10.200.10.1:8083/connectors
+# Or, to use a file containing the JSON-formatted configuration
+# curl -X POST -H "Content-Type: application/json" --data @config.json http://10.200.10.1:8083/connectors
+
+# curl -X GET http://10.200.10.1:8083/subjects
+
+
+# == Kafka Connect - sample - JDBC
+$ ./bin/connect-standalone ./etc/schema-registry/connect-avro-standalone.properties \
+		./etc/kafka-connect-jdbc/source-quickstart-postgres.properties \
+		./etc/kafka-connect-jdbc/sink-quickstart-postgres.properties
+
+$ ./bin/kafka-avro-console-consumer --new-consumer --bootstrap-server 10.200.10.1:9092 --topic my-topic-avro --from-beginning
+
+
+
+# -- Kafka Stream
+
+./bin/kafka-topics --delete --zookeeper 10.200.10.1:2181 --topic  source-topic 
+
+./bin/kafka-topics --create --zookeeper 10.200.10.1:2181 --topic source-topic --replication-factor 1 --partitions 1 --config cleanup.policy=compact
+
+./bin/kafka-console-producer --broker-list 10.200.10.1:9092 --topic source-topic
+
+./bin/kafka-console-consumer --bootstrap-server 10.200.10.1:9092 --topic source-topic \
+            --formatter kafka.tools.DefaultMessageFormatter \
+            --property print.key=true \
+            --property print.value=true \
+            --property key.deserializer=org.apache.kafka.common.serialization.StringDeserializer \
+            --property value.deserializer=org.apache.kafka.common.serialization.StringDeserializer \
+            --from-beginning
+
+./bin/kafka-console-consumer --bootstrap-server 10.200.10.1:9092 --topic sink-topic \
+            --formatter kafka.tools.DefaultMessageFormatter \
+            --property print.key=true \
+            --property print.value=true \
+            --property key.deserializer=org.apache.kafka.common.serialization.StringDeserializer \
+            --property value.deserializer=org.apache.kafka.common.serialization.StringDeserializer \
+            --from-beginning
+
