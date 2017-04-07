@@ -97,8 +97,8 @@ public class StreamApplicationDemo {
 		// Set a few key parameters
 		settings.put(StreamsConfig.APPLICATION_ID_CONFIG, "my-first-streams-application");
 		settings.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, hostIp + ":9092");
-		settings.put(StreamsConfig.KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
-		settings.put(StreamsConfig.VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+		settings.put(StreamsConfig.KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
+		settings.put(StreamsConfig.VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
 		
 		// Customize the Kafka consumer settings
 		settings.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, 60000);
