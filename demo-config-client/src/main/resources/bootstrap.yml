@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: demo-01
+  profiles:
+    active: dev
+  cloud:
+    config:
+      uri: http://localhost:8888 # N.B. this is the default
+      username: user
+      password: pword

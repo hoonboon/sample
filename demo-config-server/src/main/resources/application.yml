@@ -1,0 +1,24 @@
+server:
+  port: 8888
+
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          #uri: file://${user.home}/git/spring-cloud-config-repo  # local Git repository
+          uri: https://github.com/hoonboon/demo-config-server-repo  # remote Github repository
+          clone-on-start: true
+          basedir: target/config
+
+security:
+  user:
+    name: user
+    password: pword
+    
+encrypt:
+  key-store:
+    location: classpath:/demo-config-server.jks
+    password: ${KEYSTORE_PASSWORD:my-store-s3cr3t} # don't use a default in production
+    alias: config-server-key
+    secret: ${KEYENTRY_PASSWORD:my-key-s3cr3t} # don't use a default in production
