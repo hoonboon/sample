@@ -1,0 +1,16 @@
+server:
+  port: 9000
+security:
+  sessions: NEVER
+spring:
+  redis:
+    host: 192.168.99.100
+    port: 6379
+  session:
+    store-type: redis
+logging:
+  level:
+    org.springframework:
+      security: DEBUG
+      session: TRACE
+  
