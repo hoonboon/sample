@@ -1,0 +1,33 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css"/>
+<script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/webjars/angularjs/angular.min.js"></script>
+<script type="text/javascript" src="/webjars/angular-ui-router/angular-ui-router.min.js"></script>
+
+<script type="text/javascript" src="/app.js"></script>
+<script type="text/javascript" src="/about/about.component.js"></script>
+<script type="text/javascript" src="/people/people.service.js"></script>
+<script type="text/javascript" src="/people/people.component.js"></script>
+<script type="text/javascript" src="/people/person.component.js"></script>
+<script type="text/javascript" src="/hello/hello.component.js"></script>
+
+<style>
+.active {
+    color: blue;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body ng-app="hello">
+    <div class="container">
+        <a ui-sref="hello" ui-sref-active="active">Hello</a>
+        <a ui-sref="about" ui-sref-active="active">About</a>
+        <a ui-sref="people" ui-sref-active="active">People</a>
+        
+        <ui-view></ui-view>
+    </div>
+</body>
+</html>
