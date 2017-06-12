@@ -1,0 +1,21 @@
+
+<!-- outer container -->
+<div class="flex-h">
+
+    <!-- inner container -->
+    <div class="people">
+        <h3>Some people:</h3>
+        <ul>
+            <li ng-repeat="person in $ctrl.people">
+                <a ui-sref="npeople.person({ personId: person.id })"
+                    ui-sref-active="active"
+                    >{{person.name}}</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- viewport for child view -->
+    <ui-view></ui-view>
+    
+</div>
+

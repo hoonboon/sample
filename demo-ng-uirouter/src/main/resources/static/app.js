@@ -39,4 +39,30 @@ myApp.config(function($stateProvider) {
 	};
 	$stateProvider.state(personState);
 	
+	var nestedPeopleState = {
+		name : 'npeople',
+		url : '/npeople',
+		component : 'npeopleComponent',
+		resolve : {
+			people : function(PeopleService) {
+				return PeopleService.getAllPeople();
+			}
+		}
+	};
+	$stateProvider.state(nestedPeopleState);
+	
+	var nestedPersonState = {
+		name : 'npeople.person',
+		url : '/{personId}',
+		component : 'personComponent',
+		resolve : {
+			person : function(people, $stateParams) {
+				return people.find(function(person) {
+					return person.id === $stateParams.personId;
+				});
+			}
+		}
+	};
+	$stateProvider.state(nestedPersonState);
+	
 });

@@ -8,24 +8,42 @@
 
 <script type="text/javascript" src="/app.js"></script>
 <script type="text/javascript" src="/about/about.component.js"></script>
+<script type="text/javascript" src="/hello/hello.component.js"></script>
 <script type="text/javascript" src="/people/people.service.js"></script>
 <script type="text/javascript" src="/people/people.component.js"></script>
 <script type="text/javascript" src="/people/person.component.js"></script>
-<script type="text/javascript" src="/hello/hello.component.js"></script>
+<script type="text/javascript" src="/people/npeople.component.js"></script>
 
 <style>
 .active {
     color: blue;
     font-weight: bold;
 }
+
+.flex-h {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: flex-start;
+}
+
+.people {
+    width: 30%;
+    ul {
+        list-style: none;
+        padding: 0.1em 0;
+    }
+}
 </style>
 </head>
 
 <body ng-app="hello">
     <div class="container">
-        <a ui-sref="hello" ui-sref-active="active">Hello</a>
-        <a ui-sref="about" ui-sref-active="active">About</a>
-        <a ui-sref="people" ui-sref-active="active">People</a>
+        <ul class="nav nav-tabs">
+            <li role="presentation"><a ui-sref="hello" ui-sref-active="active">Hello</a></li>
+            <li role="presentation"><a ui-sref="about" ui-sref-active="active">About</a></li>
+            <li role="presentation"><a ui-sref="people" ui-sref-active="active">People</a></li>
+            <li role="presentation"><a ui-sref="npeople" ui-sref-active="active">NPeople</a></li>
+        </ul>
         
         <ui-view></ui-view>
     </div>
