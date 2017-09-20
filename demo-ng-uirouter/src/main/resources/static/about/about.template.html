@@ -1,1 +1,7 @@
-<h3>It's the UI-Router Hello World app!!!</h3>
+<div ng-controller="AboutCtrl as about">
+<h3><span clicking>It's the UI-Router Hello World app!!!<span></h3>
+{{about.message}}
+<my-dialog ng-hide="about.dialogIsHidden" on-close="about.hideDialog(message)">
+Check out the contents, {{about.name}}!
+</my-dialog>
+</div>
