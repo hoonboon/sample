@@ -11,6 +11,8 @@ import { InMemoryDataService }  from './in-memory-data.service';
 
 
 import { AppComponent }  from './app.component';
+import { LoggerService } from './logger.service';
+import { ConsoleLoggerService } from './console-logger.service';
 import { HeroesComponent }  from './heroes.component';
 import { HeroDetailComponent } from './hero-detail.component';
 import { HeroService } from './hero.service';
@@ -26,7 +28,7 @@ import { HeroSearchComponent } from './hero-search.component';
     AppRoutingModule
   ],
   declarations: [ AppComponent, HeroesComponent, HeroDetailComponent, DashboardComponent, HeroSearchComponent ],
-  providers:    [ HeroService ],
+  providers:    [ {provide: LoggerService, useClass: ConsoleLoggerService}, HeroService ],
   bootstrap:    [ AppComponent ]
 })
 

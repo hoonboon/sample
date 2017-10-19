@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
 
+import { LoggerService } from './logger.service';
 import { Hero } from './hero';
 
 import 'rxjs/add/operator/toPromise';
@@ -11,9 +12,21 @@ export class HeroService {
   private heroesUrl = 'api/heroes'; // url to web api
   private headers = new Headers({'Content-Type': 'application/json'});
   
-  constructor(private http: Http) {}
+  constructor(
+      private http: Http,
+      private logger: LoggerService
+    ) {}
   
   getHeroes(): Promise<Hero[]> {
+    
+    // test logging
+//    this.logger.info("in getHeroes()");
+//    this.logger.warn("in getHeroes()");
+//    this.logger.error("in getHeroes()");
+//    this.logger.invokeConsoleMethod('info', "in getHeroes()");
+//    this.logger.invokeConsoleMethod('warn', "in getHeroes()");
+//    this.logger.invokeConsoleMethod('error', "in getHeroes()");
+    
     return this.http.get(this.heroesUrl)
               .toPromise()
               .then(response => response.json().data as Hero[])
@@ -21,7 +34,7 @@ export class HeroService {
   } 
   
   private handleError(error: any): Promise<any> {
-    console.error('An error occurred!!', error); // demo purpose only
+    this.logger.error('An error occurred!!', error); // demo purpose only
     return Promise.reject(error.message || error);
   }
   
@@ -35,7 +48,7 @@ export class HeroService {
     const url = `${this.heroesUrl}/${id}`;
     //const url = '${this.heroesUrl}/${id}'; // cannot use single quote, must use backtick `
     
-    console.log('getHero(): url=' + url);
+    this.logger.info('getHero(): url=' + url);
     
     return this.http.get(url)
         .toPromise()
