@@ -1,0 +1,47 @@
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand"
+        ><img src="assets/img/ngx-bootstrap.svg" class="logo" style="width:auto; height:150%;" ></a>
+      <span class="navbar-brand">Angular + Bootstrap</span>
+    </div>
+    <ul class="nav navbar-nav">
+      <li class="active">
+        <a href="#">Link <span class="sr-only">(current)</span></a>
+      </li>
+      <li><a href="#">Link</a></li>
+      <li class="dropdown" dropdown>
+        <a dropdownToggle role="button">Dropdown <span class="caret"></span></a>
+        <ul *dropdownMenu class="dropdown-menu">
+          <li><a href="#">Action #1</a></li>
+          <li><a href="#">Action #2</a></li>
+          <li><a href="#">Action #3</a></li>
+          <li role="separator" class="divider"></li>
+          <li><a href="#">Action #4</a></li>
+          <li role="separator" class="divider"></li>
+          <li><a href="#">Action #5</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+</nav>
+<div class="container-fluid">
+  <button type="button" class="btn btn-primary"
+    tooltip="This is a tool tip.">Button with tooltip</button>
+  
+  <button type="button" class="btn btn-info"
+    (click)="openModal(template)">Create Template Modal</button>
+</div>
+
+<ng-template #template>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Modal</h4>
+    <button type="button" class="close pull-right"
+      aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    This is a modal.
+  </div>
+</ng-template>
