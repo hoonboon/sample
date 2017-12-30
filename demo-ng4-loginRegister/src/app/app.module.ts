@@ -16,6 +16,7 @@ import { AlertService } from './common/services/alert.service';
 import { LoggerService } from './common/services/logger.service';
 import { ConsoleLoggerService } from './common/services/console-logger.service';
 import { UserService } from './common/services/user.service';
+import { AuthenticateService } from './common/services/authenticate.service';
 import { AuthGuard } from './common/guards/auth.guard';
 
 // others
@@ -43,7 +44,8 @@ import { RegisterComponent } from './register/register.component';
     {provide: LoggerService, useClass: ConsoleLoggerService},
     UserService,
     // provider used to create fake backend
-    authApiMockProvider
+    authApiMockProvider,
+    AuthenticateService
   ],
   bootstrap: [AppComponent]
 })

@@ -10,6 +10,7 @@ import 'rxjs/add/operator/dematerialize';
 
 import { LoggerService } from '../common/services/logger.service';
 import { UserService } from '../common/services/user.service';
+import { AuthenticateService } from '../common/services/authenticate.service';
 
 @Injectable()
 export class AuthApiMock implements HttpInterceptor {
@@ -48,6 +49,46 @@ export class AuthApiMock implements HttpInterceptor {
           
           // respond 200 OK
           return Observable.of(new HttpResponse({ status: 200 }));
+        }
+        
+        // authenticate
+        else if (request.url.endsWith(AuthenticateService.baseUrl) && request.method === 'POST') {
+          this.logger.info('authenticate start');
+          
+          // find if any user matches login credentials
+          let filteredUsers = users.filter(user => {
+            return user.username === request.body.username && user.password === request.body.password;
+          });
+          
+          // if login details are valid return 200 OK with user details + fake JWT token
+          if (filteredUsers.length) {
+            // return only the 1st match
+            let user = filteredUsers[0];
+            
+            let body = {
+                id : user.id,
+                username : user.username,
+                firstName : user.firstName,
+                lastName : user.lastName,
+                token : 'dummy-jwt-token'
+            };
+            
+            this.logger.info('authenticate success');
+            
+            return Observable.of(new HttpResponse({ status: 200, body: body }));
+          }
+          // else return 400 Bad Request
+          else {
+            this.logger.info('authenticate error');
+            return Observable.throw('Username or password is incorrect');
+          }
+          
+        }
+        
+        // if non-matched, throw error
+        else {
+          this.logger.error('Unimplemented API: ' + JSON.stringify(request));
+          return Observable.throw('Unimplemented API: ' + request.url + ', ' + request.method);
         }
       
       })
