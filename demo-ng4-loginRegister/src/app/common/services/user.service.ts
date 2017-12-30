@@ -18,4 +18,12 @@ export class UserService {
     return this.http.post(UserService.baseUrl, user);
   }
   
+  getAll() {
+    return this.http.get<User[]>(UserService.baseUrl);
+  }
+  
+  delete(id: number) {
+    return this.http.delete(UserService.baseUrl + '/' + id)
+  }
+  
 }

@@ -85,17 +85,74 @@ export class AuthApiMock implements HttpInterceptor {
           
         }
         
+        // get users
+        else if (request.url.endsWith(UserService.baseUrl) && request.method === 'GET') {
+          this.logger.info('get users start');
+          
+          // check dummy JWT token in header (actual checking should be done at Server side)
+          // if valid return users
+          if (this.checkDummyJwtToken(request)) {
+            return Observable.of(new HttpResponse({ status: 200, body: users }));
+          } 
+          // else return 401 Not Authorized
+          else {
+            return Observable.throw('Unauthorized Access');
+          }
+          
+        }
+        
+        // delete user by id
+        else if (request.url.match(/\/api\/users\/\d+$/) && request.method === 'DELETE') {
+          this.logger.info('delete start');
+          
+          // check dummy JWT token in header (actual checking should be done at Server side)
+          if (this.checkDummyJwtToken(request)) {
+            // find user by id in the array and delete it
+            let urlParts = request.url.split('/');
+            let id = parseInt(urlParts[urlParts.length - 1]);
+            let recordFound = false;
+            
+            for (let i = 0; i < users.length; i++) {
+              let user = users[i];
+              if (user.id === id) {
+                recordFound = true;
+                users.splice(i, 1);
+                localStorage.setItem('users', JSON.stringify(users));
+                break;
+              }
+            }
+            
+            if (recordFound) {
+              // respond 200 OK
+              return Observable.of(new HttpResponse({ status: 200 }));
+            } else {
+              return Observable.throw('Record not found');
+            }
+          } 
+          // else return 401 Not Authorized
+          else {
+            return Observable.throw('Unauthorized Access');
+          }
+        }
+        
         // if non-matched, throw error
         else {
           this.logger.error('Unimplemented API: ' + JSON.stringify(request));
-          return Observable.throw('Unimplemented API: ' + request.url + ', ' + request.method);
+          //return Observable.throw('Unimplemented API: ' + request.url + ', ' + request.method);
         }
-      
+        
+        // continue with next interceptor(s)
+        return next.handle(request);
+
       })
       // call materialize and de-materialize to ensure delay even if an error is thrown (https://github.com/Reactive-Extensions/RxJS/issues/648) 
       .materialize()
       .delay(500)
       .dematerialize();
+  }
+  
+  private checkDummyJwtToken(request: HttpRequest<any>) {
+    return request.headers.get('Authorization') === 'Bearer dummy-jwt-token';
   }
   
 }

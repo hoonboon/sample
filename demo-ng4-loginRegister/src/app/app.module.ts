@@ -18,6 +18,7 @@ import { ConsoleLoggerService } from './common/services/console-logger.service';
 import { UserService } from './common/services/user.service';
 import { AuthenticateService } from './common/services/authenticate.service';
 import { AuthGuard } from './common/guards/auth.guard';
+import { JwtInterceptor } from './common/interceptors/jwt.interceptor';
 
 // others
 import { HomeComponent } from './home/home.component';
@@ -43,9 +44,11 @@ import { RegisterComponent } from './register/register.component';
     AlertService,
     {provide: LoggerService, useClass: ConsoleLoggerService},
     UserService,
+    AuthenticateService,
+    // **Note: sequence of interceptors will affect the processing outcome
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     // provider used to create fake backend
-    authApiMockProvider,
-    AuthenticateService
+    authApiMockProvider
   ],
   bootstrap: [AppComponent]
 })
